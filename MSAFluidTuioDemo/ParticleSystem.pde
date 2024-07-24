@@ -36,9 +36,9 @@ import com.sun.opengl.util.*;
 boolean renderUsingVA = true;
 
 void fadeToColor(GL2 gl, float r, float g, float b, float speed) {
-    gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA);
+    gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);
     gl.glColor4f(r, g, b, speed);
-    gl.glBegin(gl.GL_QUADS);
+    gl.glBegin(GL2.GL_QUADS);
     gl.glVertex2f(0, 0);
     gl.glVertex2f(width, 0);
     gl.glVertex2f(width, height);
@@ -96,7 +96,7 @@ class ParticleSystem {
             gl.glDrawArrays(GL2.GL_LINES, 0, maxParticles * 2);
         } 
         else {
-            gl.glBegin(gl.GL_LINES);               // start drawing points
+            gl.glBegin(GL2.GL_LINES);               // start drawing points
             for(int i=0; i<maxParticles; i++) {
                 if(particles[i].alpha > 0) {
                     particles[i].update();
@@ -123,11 +123,3 @@ class ParticleSystem {
     }
 
 }
-
-
-
-
-
-
-
-
