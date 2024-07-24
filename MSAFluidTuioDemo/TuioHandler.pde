@@ -46,9 +46,9 @@ void initTUIO() {
 
 
 void updateTUIO() {
-    Vector tuioCursorList = tuioClient.getTuioCursors();
+    ArrayList tuioCursorList = tuioClient.getTuioCursorList();
     for (int i=0;i<tuioCursorList.size();i++) {
-        TuioCursor tcur = (TuioCursor)tuioCursorList.elementAt(i);
+        TuioCursor tcur = (TuioCursor)tuioCursorList.get(i);
         float vx = tcur.getXSpeed() * tuioCursorSpeedMult;
         float vy = tcur.getYSpeed() * tuioCursorSpeedMult;
         if(vx == 0 && vy == 0) {

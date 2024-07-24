@@ -40,7 +40,9 @@
  * ***********************************************************************/ 
 
 import msafluid.*;
-import javax.media.opengl.GL2;
+//import javax.media.opengl.GL2;
+//import processing.opengl.*;
+import com.jogamp.opengl.GL2;
 
 final float FLUID_WIDTH = 120;
 
@@ -101,7 +103,7 @@ void draw() {
         image(imgFluid, 0, 0, width, height);
     } 
 
-    particleSystem.updateAndDraw();
+    //particleSystem.updateAndDraw();
 
 }
 
@@ -146,7 +148,7 @@ void addForce(float x, float y, float dx, float dy) {
         fluidSolver.gOld[index]  += green(drawColor) * colorMult;
         fluidSolver.bOld[index]  += blue(drawColor) * colorMult;
 
-        particleSystem.addParticles(x * width, y * height, 10);
+        //particleSystem.addParticles(x * width, y * height, 10);
         fluidSolver.uOld[index] += dx * velocityMult;
         fluidSolver.vOld[index] += dy * velocityMult;
     }
