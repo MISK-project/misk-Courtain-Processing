@@ -40,9 +40,7 @@
  * ***********************************************************************/ 
 
 import msafluid.*;
-
-import processing.opengl.*;
-import javax.media.opengl.*;
+import javax.media.opengl.GL2;
 
 final float FLUID_WIDTH = 120;
 
@@ -58,10 +56,9 @@ PImage imgFluid;
 boolean drawFluid = true;
 
 void setup() {
-//    size(1280, 768, OPENGL);    // use OPENGL rendering for bilinear filtering on texture
+    size(960, 640, P3D);    // use OPENGL rendering for bilinear filtering on texture
 //    size(screen.width * 49/50, screen.height * 49/50, OPENGL);
-    size(screen.width, screen.height, OPENGL);
-    hint( ENABLE_OPENGL_4X_SMOOTH );    // Turn on 4X antialiasing
+//    hint( ENABLE_OPENGL_4X_SMOOTH );    // Turn on 4X antialiasing
 
     invWidth = 1.0f/width;
     invHeight = 1.0f/height;
