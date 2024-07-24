@@ -36,9 +36,9 @@ import com.sun.opengl.util.*;
 boolean renderUsingVA = true;
 
 void fadeToColor(GL2 gl, float r, float g, float b, float speed) {
-    gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA);
+    gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);
     gl.glColor4f(r, g, b, speed);
-    gl.glBegin(gl.GL_QUADS);
+    gl.glBegin(GL2.GL_QUADS);
     gl.glVertex2f(0, 0);
     gl.glVertex2f(width, 0);
     gl.glVertex2f(width, height);
@@ -47,7 +47,7 @@ void fadeToColor(GL2 gl, float r, float g, float b, float speed) {
 }
 
 
-class ParticleSystem {
+/*class ParticleSystem {
     FloatBuffer posArray;
     FloatBuffer colArray;
 
@@ -96,7 +96,7 @@ class ParticleSystem {
             gl.glDrawArrays(GL2.GL_LINES, 0, maxParticles * 2);
         } 
         else {
-            gl.glBegin(gl.GL_LINES);               // start drawing points
+            gl.glBegin(GL2.GL_LINES);               // start drawing points
             for(int i=0; i<maxParticles; i++) {
                 if(particles[i].alpha > 0) {
                     particles[i].update();
@@ -122,12 +122,40 @@ class ParticleSystem {
         if(curIndex >= maxParticles) curIndex = 0;
     }
 
+}*/
+
+class ParticleSystem {
+  ArrayList<Particle> particles;
+
+  PShape particleShape;
+
+  ParticleSystem(int n) {
+    particles = new ArrayList<Particle>();
+    particleShape = createShape(PShape.GROUP);
+
+    for (int i = 0; i < n; i++) {
+      Particle p = new Particle();
+      particles.add(p);
+      particleShape.addChild(p.getShape());
+    }
+  }
+
+  void update() {
+    for (Particle p : particles) {
+      p.update();
+    }
+  }
+
+  void setEmitter(float x, float y) {
+    for (Particle p : particles) {
+      if (p.isDead()) {
+        p.rebirth(x, y);
+      }
+    }
+  }
+
+  void display() {
+
+    shape(particleShape);
+  }
 }
-
-
-
-
-
-
-
-
