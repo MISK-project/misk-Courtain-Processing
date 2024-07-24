@@ -51,7 +51,7 @@ float aspectRatio, aspectRatio2;
 
 MSAFluidSolver2D fluidSolver;
 
-ParticleSystem particleSystem;
+//ParticleSystem particleSystem;
 
 PImage imgFluid;
 
@@ -75,7 +75,7 @@ void setup() {
     imgFluid = createImage(fluidSolver.getWidth(), fluidSolver.getHeight(), RGB);
 
     // create particle system
-    particleSystem = new ParticleSystem();
+    //particleSystem = new ParticleSystem();
 
     // init TUIO
     initTUIO();
@@ -153,4 +153,3 @@ void addForce(float x, float y, float dx, float dy) {
         fluidSolver.vOld[index] += dy * velocityMult;
     }
 }
-
