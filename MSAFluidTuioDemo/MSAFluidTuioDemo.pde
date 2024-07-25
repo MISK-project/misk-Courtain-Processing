@@ -54,6 +54,7 @@ MSAFluidSolver2D fluidSolver;
 ParticleSystem particleSystem;
 
 PImage imgFluid;
+PImage sprite;  
 
 boolean drawFluid = true;
 
@@ -73,9 +74,12 @@ void setup() {
 
     // create image to hold fluid picture
     imgFluid = createImage(fluidSolver.getWidth(), fluidSolver.getHeight(), RGB);
+    sprite = loadImage("sprite.png");
 
     // create particle system
-    particleSystem = new ParticleSystem(10000);
+    particleSystem = new ParticleSystem(100);
+    
+    //hint(DISABLE_DEPTH_MASK);
 
     // init TUIO
     initTUIO();
@@ -106,6 +110,8 @@ void draw() {
     //particleSystem.updateAndDraw();
     particleSystem.update();
     particleSystem.display();
+    
+    //particleSystem.setEmitter(mouseX, mouseY);
 
 }
 
@@ -152,6 +158,7 @@ void addForce(float x, float y, float dx, float dy) {
 
         //particleSystem.addParticles(x * width, y * height, 10);
         particleSystem.setEmitter(x * width, y * height);
+        
         fluidSolver.uOld[index] += dx * velocityMult;
         fluidSolver.vOld[index] += dy * velocityMult;
     }

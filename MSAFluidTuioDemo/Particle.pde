@@ -127,7 +127,7 @@ class Particle {
   PShape part;
   float partSize;
   
-  PVector gravity = new PVector(0,0.1);
+  PVector gravity = new PVector(0,0.00001);
 
 
   Particle() {
@@ -135,12 +135,12 @@ class Particle {
     part = createShape();
     part.beginShape(QUAD);
     part.noStroke();
-    part.texture(imgFluid);
+    part.texture(sprite);
     part.normal(0, 0, 1);
     part.vertex(-partSize/2, -partSize/2, 0, 0);
-    part.vertex(+partSize/2, -partSize/2, imgFluid.width, 0);
-    part.vertex(+partSize/2, +partSize/2, imgFluid.width, imgFluid.height);
-    part.vertex(-partSize/2, +partSize/2, 0, imgFluid.height);
+    part.vertex(+partSize/2, -partSize/2, sprite.width, 0);
+    part.vertex(+partSize/2, +partSize/2, sprite.width, sprite.height);
+    part.vertex(-partSize/2, +partSize/2, 0, sprite.height);
     part.endShape();
     
     rebirth(width/2,height/2);
