@@ -90,11 +90,11 @@ class ParticleSystem {
                     particles[i].updateVertexArrays(i, posArray, colArray);
                 }
             }    
-            /*gl.glEnableClientState(GL2.GL_VERTEX_ARRAY);
-            gl.glVertexPointer(2, GL4.GL_FLOAT, 0, posArray);
+            gl.glEnableClientState(GL2.GL_VERTEX_ARRAY);
+            //gl.glVertexAttribPointer(0, 2, GL4.GL_FLOAT, false, 0, posArray.offset);
 
             gl.glEnableClientState(GL2.GL_COLOR_ARRAY);
-            gl.glColorPointer(3, GL4.GL_FLOAT, 0, colArray);*/
+            //gl.glColorPointer(3, GL4.GL_FLOAT, 0, colArray);
 
             gl.glDrawArrays(GL4.GL_LINES, 0, maxParticles * 2);
         } 
