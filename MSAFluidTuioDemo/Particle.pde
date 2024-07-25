@@ -135,12 +135,12 @@ class Particle {
     part = createShape();
     part.beginShape(QUAD);
     part.noStroke();
-    part.texture(sprite);
+    part.texture(imgFluid);
     part.normal(0, 0, 1);
     part.vertex(-partSize/2, -partSize/2, 0, 0);
-    part.vertex(+partSize/2, -partSize/2, sprite.width, 0);
-    part.vertex(+partSize/2, +partSize/2, sprite.width, sprite.height);
-    part.vertex(-partSize/2, +partSize/2, 0, sprite.height);
+    part.vertex(+partSize/2, -partSize/2, imgFluid.width, 0);
+    part.vertex(+partSize/2, +partSize/2, imgFluid.width, imgFluid.height);
+    part.vertex(-partSize/2, +partSize/2, 0, imgFluid.height);
     part.endShape();
     
     rebirth(width/2,height/2);

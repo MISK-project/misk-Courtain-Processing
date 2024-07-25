@@ -104,11 +104,13 @@ void draw() {
     } 
 
     //particleSystem.updateAndDraw();
+    particleSystem.update();
+    particleSystem.display();
 
 }
 
 void mousePressed() {
-    //drawFluid ^= true;
+    drawFluid ^= true;
 }
 
 void keyPressed() {
@@ -149,6 +151,7 @@ void addForce(float x, float y, float dx, float dy) {
         fluidSolver.bOld[index]  += blue(drawColor) * colorMult;
 
         //particleSystem.addParticles(x * width, y * height, 10);
+        particleSystem.setEmitter(x * width, y * height);
         fluidSolver.uOld[index] += dx * velocityMult;
         fluidSolver.vOld[index] += dy * velocityMult;
     }
