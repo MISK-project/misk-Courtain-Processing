@@ -112,18 +112,14 @@ class Particle {
     }
 
 
-    void drawOldSchool(GL2 gl) {
-        gl.glColor3f(alpha, alpha, alpha);
+    void drawOldSchool(GL4 gl) {
+        gl.glBlendColor(alpha, alpha, alpha, alpha);
+        gl.glVertexAttrib2f(0, x-vx, y-vy);
+        gl.glVertexAttrib2f(0, x, y);
+        /*gl.glColor3f(alpha, alpha, alpha);
         gl.glVertex2f(x-vx, y-vy);
-        gl.glVertex2f(x, y);
+        gl.glVertex2f(x, y);*/
+
     }
 
 }
-
-
-
-
-
-
-
-

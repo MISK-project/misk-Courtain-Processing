@@ -103,13 +103,3 @@ void removeTuioCursor(TuioCursor tcur) {
 
 void refresh(TuioTime bundleTime) {
 }
-
-
-
-
-
-
-
-
-
-
