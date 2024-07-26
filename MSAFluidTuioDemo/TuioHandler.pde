@@ -41,7 +41,7 @@ TuioPoint tuioLastTap;        // stores last tap information (to detect double t
 boolean tuioDoubleTap = false;
 
 void initTUIO() {
-    tuioClient  = new TuioProcessing(this, 3334);
+    tuioClient  = new TuioProcessing(this);//, 3334);
 }
 
 
