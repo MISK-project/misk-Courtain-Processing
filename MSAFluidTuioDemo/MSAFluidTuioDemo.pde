@@ -75,7 +75,6 @@ void setup() {
 
     // create particle system
     particleSystem = new ParticleSystem(100);
-    
     //hint(DISABLE_DEPTH_MASK);
 
     // init TUIO
@@ -106,9 +105,7 @@ void draw() {
 
     particleSystem.update();
     particleSystem.display();
-    
     //particleSystem.setEmitter(mouseX, mouseY);
-
 }
 
 void mousePressed() {
@@ -151,7 +148,7 @@ void addForce(float x, float y, float dx, float dy) {
         fluidSolver.bOld[index]  += blue(drawColor) * colorMult;
 
         particleSystem.setEmitter(x * width, y * height);
-        
+
         fluidSolver.uOld[index] += dx * velocityMult;
         fluidSolver.vOld[index] += dy * velocityMult;
     }
