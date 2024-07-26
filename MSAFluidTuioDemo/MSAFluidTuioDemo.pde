@@ -40,10 +40,6 @@
  * ***********************************************************************/ 
 
 import msafluid.*;
-//import javax.media.opengl.GL2;
-import processing.opengl.*;
-//import com.jogamp.opengl.GL2;
-import com.jogamp.opengl.*;
 
 final float FLUID_WIDTH = 120;
 
@@ -55,13 +51,14 @@ MSAFluidSolver2D fluidSolver;
 ParticleSystem particleSystem;
 
 PImage imgFluid;
+PImage sprite;  
 
 boolean drawFluid = true;
 
 void setup() {
     size(960, 640, P3D);    // use OPENGL rendering for bilinear filtering on texture
-//    size(screen.width * 49/50, screen.height * 49/50, OPENGL);
-//    hint( ENABLE_OPENGL_4X_SMOOTH );    // Turn on 4X antialiasing
+    //size(screen.width * 49/50, screen.height * 49/50, OPENGL);
+    //hint( ENABLE_OPENGL_4X_SMOOTH );    // Turn on 4X antialiasing
 
     invWidth = 1.0f/width;
     invHeight = 1.0f/height;
@@ -74,9 +71,11 @@ void setup() {
 
     // create image to hold fluid picture
     imgFluid = createImage(fluidSolver.getWidth(), fluidSolver.getHeight(), RGB);
+    sprite = loadImage("sprite.png");
 
     // create particle system
-    particleSystem = new ParticleSystem();
+    particleSystem = new ParticleSystem(100);
+    //hint(DISABLE_DEPTH_MASK);
 
     // init TUIO
     initTUIO();
@@ -104,8 +103,9 @@ void draw() {
         image(imgFluid, 0, 0, width, height);
     } 
 
-    particleSystem.updateAndDraw();
-
+    particleSystem.update();
+    particleSystem.display();
+    //particleSystem.setEmitter(mouseX, mouseY);
 }
 
 void mousePressed() {
@@ -115,8 +115,6 @@ void mousePressed() {
 void keyPressed() {
     switch(key) {
     case 'r': 
-        renderUsingVA ^= true; 
-        println("renderUsingVA: " + renderUsingVA);
         break;
     }
 }
@@ -149,7 +147,8 @@ void addForce(float x, float y, float dx, float dy) {
         fluidSolver.gOld[index]  += green(drawColor) * colorMult;
         fluidSolver.bOld[index]  += blue(drawColor) * colorMult;
 
-        particleSystem.addParticles(x * width, y * height, 10);
+        particleSystem.setEmitter(x * width, y * height);
+
         fluidSolver.uOld[index] += dx * velocityMult;
         fluidSolver.vOld[index] += dy * velocityMult;
     }
