@@ -1,6 +1,8 @@
 class Particle {
+  float MAX_LIFESPAN = 100;
+  
   PVector velocity;
-  float lifespan = 255;
+  float lifespan;
   
   PShape part;
   float partSize;
@@ -22,7 +24,7 @@ class Particle {
     part.endShape();
     
     rebirth(width/2,height/2);
-    lifespan = random(255);
+    lifespan = random(MAX_LIFESPAN);
   }
 
   PShape getShape() {
@@ -34,7 +36,7 @@ class Particle {
     float speed = random(0.5,4);
     velocity = new PVector(cos(a), sin(a));
     velocity.mult(speed);
-    lifespan = 255;   
+    lifespan = random(MAX_LIFESPAN);   
     part.resetMatrix();
     part.translate(x, y); 
   }
