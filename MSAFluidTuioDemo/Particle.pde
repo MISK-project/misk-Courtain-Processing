@@ -7,7 +7,7 @@ class Particle {
   PShape part;
   float partSize;
   
-  PVector gravity = new PVector(0,0.00001);
+  PVector gravity = new PVector(0,0.1);
 
 
   Particle() {
@@ -49,10 +49,13 @@ class Particle {
     } 
   }
   
-
   public void update() {
+    update(gravity);
+  }
+  
+  public void update(PVector vel) {
     lifespan = lifespan - 1;
-    velocity.add(gravity);
+    velocity.add(vel);
     
     part.setTint(color(255,lifespan));
     part.translate(velocity.x, velocity.y);

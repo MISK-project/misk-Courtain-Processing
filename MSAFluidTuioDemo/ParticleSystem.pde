@@ -14,9 +14,9 @@ class ParticleSystem {
     }
   }
 
-  void update() {
+  void update(PVector vel) {
     for (Particle p : particles) {
-      p.update();
+      p.update(vel);
     }
   }
 

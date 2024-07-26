@@ -55,11 +55,13 @@ PImage sprite;
 
 boolean drawFluid = true;
 
+PVector vel= new PVector(0,0);
+
 void setup() {
     //size(960, 640, P3D);    // use OPENGL rendering for bilinear filtering on texture
     //size(screen.width * 49/50, screen.height * 49/50, OPENGL);
     //hint( ENABLE_OPENGL_4X_SMOOTH );    // Turn on 4X antialiasing
-    fullScreen(P3D);
+    fullScreen(P2D);
     invWidth = 1.0f/width;
     invHeight = 1.0f/height;
     aspectRatio = width * invHeight;
@@ -88,7 +90,22 @@ void mouseMoved() {
     float mouseVelY = (mouseY - pmouseY) * invHeight;
 
     addForce(mouseNormX, mouseNormY, mouseVelX, mouseVelY);
+    
+    //vel.x = mouseVelX*30;
+    //vel.y = mouseVelY*30;
 }
+
+/*void touchMoved() {
+    float mouseNormX = touches[0].x * invWidth;
+    float mouseNormY = touches[0].y * invHeight;
+    float mouseVelX = (random(-.3, .3)) * invWidth;
+    float mouseVelY = (random(-.3, .3)) * invHeight;
+
+    addForce(mouseNormX, mouseNormY, mouseVelX, mouseVelY);
+    
+    //vel.x = mouseVelX*30;
+    //vel.y = mouseVelY*30;
+}*/
 
 void draw() {
     updateTUIO();
@@ -102,14 +119,14 @@ void draw() {
         imgFluid.updatePixels();//  fastblur(imgFluid, 2);
         image(imgFluid, 0, 0, width, height);
     } 
-
-    particleSystem.update();
+    println("velX: " + vel.x + " velY: " + vel.y);
+    particleSystem.update(vel);
     particleSystem.display();
     //particleSystem.setEmitter(mouseX, mouseY);
 }
 
 void mousePressed() {
-    drawFluid ^= true;
+    //drawFluid ^= true;
 }
 
 void keyPressed() {
@@ -146,10 +163,15 @@ void addForce(float x, float y, float dx, float dy) {
         fluidSolver.rOld[index]  += red(drawColor) * colorMult;
         fluidSolver.gOld[index]  += green(drawColor) * colorMult;
         fluidSolver.bOld[index]  += blue(drawColor) * colorMult;
-
-        particleSystem.setEmitter(x * width, y * height);
+        
+        vel.x = dx * velocityMult;
+        vel.y = dy * velocityMult;
 
         fluidSolver.uOld[index] += dx * velocityMult;
         fluidSolver.vOld[index] += dy * velocityMult;
+        
+        particleSystem.setEmitter(x * width, y * height);
+        //particleSystem.update(new PVector(dx*velocityMult, dy*velocityMult));
+
     }
 }
