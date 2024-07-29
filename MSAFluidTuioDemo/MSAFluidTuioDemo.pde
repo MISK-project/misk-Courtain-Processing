@@ -58,10 +58,10 @@ boolean drawFluid = true;
 PVector vel= new PVector(0,0);
 
 void setup() {
-    //size(960, 640, P3D);    // use OPENGL rendering for bilinear filtering on texture
+    size(960, 640, P3D);    // use OPENGL rendering for bilinear filtering on texture
     //size(screen.width * 49/50, screen.height * 49/50, OPENGL);
+    //fullScreen(P2D);
     //hint( ENABLE_OPENGL_4X_SMOOTH );    // Turn on 4X antialiasing
-    fullScreen(P2D);
     invWidth = 1.0f/width;
     invHeight = 1.0f/height;
     aspectRatio = width * invHeight;
@@ -119,7 +119,7 @@ void draw() {
         imgFluid.updatePixels();//  fastblur(imgFluid, 2);
         image(imgFluid, 0, 0, width, height);
     } 
-    println("velX: " + vel.x + " velY: " + vel.y);
+    //println("velX: " + vel.x + " velY: " + vel.y);
     particleSystem.update(vel);
     particleSystem.display();
     //particleSystem.setEmitter(mouseX, mouseY);
@@ -164,8 +164,8 @@ void addForce(float x, float y, float dx, float dy) {
         fluidSolver.gOld[index]  += green(drawColor) * colorMult;
         fluidSolver.bOld[index]  += blue(drawColor) * colorMult;
         
-        vel.x = dx * velocityMult;
-        vel.y = dy * velocityMult;
+        vel.x = dx * velocityMult/2;
+        vel.y = dy * velocityMult/2;
 
         fluidSolver.uOld[index] += dx * velocityMult;
         fluidSolver.vOld[index] += dy * velocityMult;
