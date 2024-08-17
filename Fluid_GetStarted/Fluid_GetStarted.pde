@@ -90,5 +90,5 @@ import processing.opengl.PGraphics2D;
         fluid.addVelocity(px, py, 14, vx, vy);
         fluid.addDensity (px, py, 20, 0.0f, 0.4f, 1.0f, 1.0f);
         fluid.addDensity (px, py,  8, 1.0f, 1.0f, 1.0f, 1.0f);
-        println("x: " + px + ", y: " + py + ", vx: " + vx + ", vy: " + vy);
+        //println("x: " + px + ", y: " + py + ", vx: " + vx + ", vy: " + vy);
    }
