@@ -48,19 +48,11 @@ import processing.opengl.PGraphics2D;
     fluid.param.dissipation_density  = 0.99f;
 
     // adding data to the fluid simulation
-    fluid.addCallback_FluiData(new  DwFluid2D.FluidData(){
-      public void update(DwFluid2D fluid) {
-        if(mousePressed){
-          float px     = mouseX;
-          float py     = height-mouseY;
-          float vx     = (mouseX - pmouseX) * +15;
-          float vy     = (mouseY - pmouseY) * -15;
-          fluid.addVelocity(px, py, 14, vx, vy);
-          fluid.addDensity (px, py, 20, 0.0f, 0.4f, 1.0f, 1.0f);
-          fluid.addDensity (px, py,  8, 1.0f, 1.0f, 1.0f, 1.0f);
-        }
-      }
-    });
+    //fluid.addCallback_FluiData(new  DwFluid2D.FluidData(){
+    //});
+    
+    // init TUIO
+    initTUIO();
    
     // render-target
     pg_fluid = (PGraphics2D) createGraphics(width, height, P2D);
@@ -71,6 +63,7 @@ import processing.opengl.PGraphics2D;
 
   public void draw() {    
     // update simulation
+    updateTUIO();
     fluid.update();
     
     // clear render target
@@ -84,3 +77,18 @@ import processing.opengl.PGraphics2D;
     // display
     image(pg_fluid, 0, 0);
   }
+  
+  void mouseMoved() {
+    float px     = mouseX;
+    float py     = height-mouseY;
+    float vx     = (mouseX - pmouseX) * +15;
+    float vy     = (mouseY - pmouseY) * -15;
+    updateFluid(px, py, vx, vy); 
+  }
+  
+  void updateFluid(float px, float py, float vx, float vy) {
+        fluid.addVelocity(px, py, 14, vx, vy);
+        fluid.addDensity (px, py, 20, 0.0f, 0.4f, 1.0f, 1.0f);
+        fluid.addDensity (px, py,  8, 1.0f, 1.0f, 1.0f, 1.0f);
+        println("x: " + px + ", y: " + py + ", vx: " + vx + ", vy: " + vy);
+   }
