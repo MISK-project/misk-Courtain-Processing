@@ -85,7 +85,7 @@ import processing.opengl.PGraphics2D;
       fluid.addDensity(px, py, radius, r, g, b, intensity, 3);
 
       
-      boolean mouse_input = !cp5.isMouseOver() && mousePressed && !obstacle_painter.isDrawing();
+      /*boolean mouse_input = !cp5.isMouseOver() && mousePressed && !obstacle_painter.isDrawing();
       
       // add impulse: density + velocity
       if(mouse_input && mouseButton == LEFT){
@@ -98,8 +98,27 @@ import processing.opengl.PGraphics2D;
         
         fluid.addDensity(px, py, radius, 0.25f, 0.0f, 0.1f, 1.0f);
         fluid.addVelocity(px, py, radius, vx, vy);
-      }
+      }*/
      
+    }
+  }
+  
+  void mouseMoved() {
+    float vscale = 15;
+    float px     = mouseX;
+    float py     = height-mouseY;
+    float vx     = (mouseX - pmouseX) * +vscale;
+    float vy     = (mouseY - pmouseY) * -vscale;
+    updateFluid(px, py, vx, vy); 
+  }
+  
+  void updateFluid(float px, float py, float vx, float vy) {
+    boolean allow_input = !cp5.isMouseOver() && !obstacle_painter.isDrawing();
+    if (allow_input) {
+      float radius = 15;
+      fluid.addDensity(px, py, radius, 0.25f, 0.0f, 0.1f, 1.0f);
+      fluid.addVelocity(px, py, radius, vx, vy);
+      println("x: " + px + ", y: " + py + ", vx: " + vx + ", vy: " + vy);
     }
   }
   
@@ -189,6 +208,9 @@ import processing.opengl.PGraphics2D;
     // class, that manages interactive drawing (adding/removing) of obstacles
     obstacle_painter = new ObstaclePainter(pg_obstacles);
     
+    // init TUIO
+    initTUIO();
+    
     createGUI();
     
     frameRate(60);
@@ -199,6 +221,7 @@ import processing.opengl.PGraphics2D;
   public void draw() {    
     
     // update simulation
+    updateTUIO();
     if(UPDATE_FLUID){
       fluid.addObstacles(pg_obstacles);
       fluid.update();

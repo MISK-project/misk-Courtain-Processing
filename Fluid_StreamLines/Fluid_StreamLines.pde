@@ -56,7 +56,7 @@ import processing.opengl.PGraphics2D;
     public void update(DwFluid2D fluid) {
     
       float px, py, vx, vy, radius, vscale, temperature;
-      
+      /*
       // add impulse: density + temperature
       px = width-80;
       py = 30;
@@ -76,7 +76,7 @@ import processing.opengl.PGraphics2D;
       fluid.addDensity(px, py, radius, 1, 1, 1, 1);
       temperature = -4;
       fluid.addTemperature(px, py, radius, temperature);
-      
+      */
 
       boolean mouse_input = !cp5.isMouseOver() && mousePressed;
       
@@ -93,7 +93,7 @@ import processing.opengl.PGraphics2D;
         fluid.addVelocity(px, py, radius, vx, vy);
       }
       
-      // add impulse: density + velocity
+      // add impulse: density + temperature
       if(mouse_input && mouseButton == RIGHT){
         vscale = 15;
         px     = mouseX;
@@ -217,6 +217,8 @@ import processing.opengl.PGraphics2D;
     
     pg_obstacles.endDraw();
     
+    // init TUIO
+    initTUIO();
 
     createGUI();
     
@@ -233,6 +235,7 @@ import processing.opengl.PGraphics2D;
   public void draw() {    
 
     // update simulation
+    updateTUIO();
     if(UPDATE_FLUID){
       fluid.addObstacles(pg_obstacles);
       fluid.update();

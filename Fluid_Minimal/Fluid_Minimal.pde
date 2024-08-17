@@ -139,6 +139,9 @@ import processing.opengl.PGraphics2D;
     
     // add to the fluid-solver
     fluid.addObstacles(pg_obstacles);
+    
+    // init TUIO
+    initTUIO();
 
     frameRate(60);
   }
@@ -147,6 +150,7 @@ import processing.opengl.PGraphics2D;
   public void draw() {    
     
     // update simulation
+    updateTUIO();
     fluid.update();
     
     // clear render target

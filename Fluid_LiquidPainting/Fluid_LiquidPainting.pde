@@ -126,7 +126,7 @@ import processing.opengl.PGraphics2D;
   boolean DISPLAY_FLUID_TEXTURES     = true;
   boolean DISPLAY_FLUID_VECTORS      = false;
   int     DISPLAY_fluid_texture_mode = 0;
-  boolean DISPLAY_PARTICLES          = false;
+  boolean DISPLAY_PARTICLES          = true;
   
  
   public void settings() {
@@ -158,7 +158,7 @@ import processing.opengl.PGraphics2D;
     fluid.addCallback_FluiData(cb_fluid_data);
     
     // image, used for density
-    image = loadImage("../../data/mc_escher.jpg");
+    image = loadImage("../data/mc_escher.jpg");
 
     // fluid render target
     pg_fluid = (PGraphics2D) createGraphics(viewport_w, viewport_h, P2D);
@@ -178,6 +178,9 @@ import processing.opengl.PGraphics2D;
     pg_image.imageMode(CENTER);
     pg_image.image(image, 0, 0);
     pg_image.endDraw();
+    
+    // init TUIO
+    initTUIO();
 
     createGUI();
 
@@ -190,6 +193,8 @@ import processing.opengl.PGraphics2D;
 
   public void draw() {
    
+    // update simulation
+    updateTUIO();
     if(UPDATE_FLUID){
       fluid.update();
       particle_system.update(fluid);
