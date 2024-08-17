@@ -41,7 +41,7 @@
 
 import msafluid.*;
 
-final float FLUID_WIDTH = 120;
+final float FLUID_WIDTH = 60;
 
 float invWidth, invHeight;    // inverse of screen dimensions
 float aspectRatio, aspectRatio2;
@@ -54,11 +54,12 @@ PImage imgFluid;
 PImage sprite;  
 
 boolean drawFluid = true;
+boolean verbose = true; // print console debug messages
 
 PVector vel= new PVector(0,0);
 
 void setup() {
-    size(960, 640, P3D);    // use OPENGL rendering for bilinear filtering on texture
+    size(960, 640, P2D);    // use OPENGL rendering for bilinear filtering on texture
     //size(screen.width * 49/50, screen.height * 49/50, OPENGL);
     //fullScreen(P2D);
     //hint( ENABLE_OPENGL_4X_SMOOTH );    // Turn on 4X antialiasing
@@ -70,7 +71,7 @@ void setup() {
     // create fluid and set options
     fluidSolver = new MSAFluidSolver2D((int)(FLUID_WIDTH), (int)(FLUID_WIDTH * height/width));
     fluidSolver.enableRGB(true).setFadeSpeed(0.003).setDeltaT(0.5).setVisc(0.0001);
-
+    
     // create image to hold fluid picture
     imgFluid = createImage(fluidSolver.getWidth(), fluidSolver.getHeight(), RGB);
     sprite = loadImage("sprite.png");
@@ -119,7 +120,6 @@ void draw() {
         imgFluid.updatePixels();//  fastblur(imgFluid, 2);
         image(imgFluid, 0, 0, width, height);
     } 
-    //println("velX: " + vel.x + " velY: " + vel.y);
     particleSystem.update(vel);
     particleSystem.display();
     //particleSystem.setEmitter(mouseX, mouseY);
