@@ -41,7 +41,7 @@
 
 import msafluid.*;
 
-final float FLUID_WIDTH = 60;
+final float FLUID_WIDTH = 90;
 
 float invWidth, invHeight;    // inverse of screen dimensions
 float aspectRatio, aspectRatio2;
@@ -54,7 +54,6 @@ PImage imgFluid;
 PImage sprite;  
 
 boolean drawFluid = true;
-boolean verbose = true; // print console debug messages
 
 PVector vel= new PVector(0,0);
 
@@ -141,6 +140,8 @@ void keyPressed() {
 // add force and dye to fluid, and create particles
 void addForce(float x, float y, float dx, float dy) {
     float speed = dx * dx  + dy * dy * aspectRatio2;    // balance the x and y components of speed with the screen aspect ratio
+    
+    println("x: " + x + ", y: " + y + ", vx: " + dx + ", vy: " + dy);
 
     if(speed > 0) {
         if(x<0) x = 0; 

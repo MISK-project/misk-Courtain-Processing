@@ -39,6 +39,7 @@ final static float tuioDoubleTapTimeThreshold = 0.2; // seconds between last two
 
 TuioPoint tuioLastTap;        // stores last tap information (to detect double tap)
 boolean tuioDoubleTap = false;
+boolean verbose = false; // print console debug messages
 
 void initTUIO() {
     tuioClient  = new TuioProcessing(this);//, 3334);
