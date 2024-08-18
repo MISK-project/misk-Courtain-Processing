@@ -40,15 +40,17 @@
  * ***********************************************************************/ 
 
 import msafluid.*;
+import oscP5.*;
 
-final float FLUID_WIDTH = 90;
+float FLUID_WIDTH = 90;
 
 float invWidth, invHeight;    // inverse of screen dimensions
 float aspectRatio, aspectRatio2;
 
 MSAFluidSolver2D fluidSolver;
-
 ParticleSystem particleSystem;
+OscP5 oscP5;
+//NetAddress myBroadcastLocationOSC;
 
 PImage imgFluid;
 PImage sprite;  
@@ -78,6 +80,9 @@ void setup() {
     // create particle system
     particleSystem = new ParticleSystem(100);
     //hint(DISABLE_DEPTH_MASK);
+    
+    // create osc object
+    oscP5 = new OscP5(this,12000);
 
     // init TUIO
     initTUIO();
@@ -141,7 +146,7 @@ void keyPressed() {
 void addForce(float x, float y, float dx, float dy) {
     float speed = dx * dx  + dy * dy * aspectRatio2;    // balance the x and y components of speed with the screen aspect ratio
     
-    println("x: " + x + ", y: " + y + ", vx: " + dx + ", vy: " + dy);
+    //println("x: " + x + ", y: " + y + ", vx: " + dx + ", vy: " + dy);
 
     if(speed > 0) {
         if(x<0) x = 0; 
@@ -175,4 +180,41 @@ void addForce(float x, float y, float dx, float dy) {
         //particleSystem.update(new PVector(dx*velocityMult, dy*velocityMult));
 
     }
+}
+
+/* incoming osc message are forwarded to the oscEvent method. */
+void oscEvent(OscMessage theOscMessage) {
+  /* check if theOscMessage has the address pattern we are looking for. */
+  
+  if(theOscMessage.checkAddrPattern("/slider1")==true) {
+    /* check if the typetag is the right one. */
+    if(theOscMessage.checkTypetag("i")) {
+      /* parse theOscMessage and extract the values from the osc message arguments. */
+      int firstValue = theOscMessage.get(0).intValue();  
+      //float secondValue = theOscMessage.get(1).floatValue();
+      //String thirdValue = theOscMessage.get(2).stringValue();
+      //print("### received an osc message /test with typetag ifs.");
+      println(" values: "+firstValue);
+      fluidSolver.setVisc(firstValue / 127);
+      //fluidSolver.setDeltaT(firstValue / 127);
+      //fluidSolver.setFadeSpeed(firstValue / 127);
+      return;
+    }  
+  }
+  if(theOscMessage.checkAddrPattern("/slider2")==true) {
+    /* check if the typetag is the right one. */
+    if(theOscMessage.checkTypetag("i")) {
+      /* parse theOscMessage and extract the values from the osc message arguments. */
+      int firstValue = theOscMessage.get(0).intValue();  
+      //float secondValue = theOscMessage.get(1).floatValue();
+      //String thirdValue = theOscMessage.get(2).stringValue();
+      //print("### received an osc message /test with typetag ifs.");
+      println(" values: "+firstValue);
+      //fluidSolver.setVisc(firstValue / 127);
+      //fluidSolver.setDeltaT(firstValue / 127);
+      fluidSolver.setFadeSpeed(firstValue / 127);
+      return;
+    }  
+  }
+  println("### received an osc message. with address pattern "+theOscMessage.addrPattern());
 }

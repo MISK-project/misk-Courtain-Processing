@@ -59,6 +59,18 @@ void updateTUIO() {
         addForce(tcur.getX(), tcur.getY(), vx, vy);
     }
 
+    ArrayList tuioBlobList = tuioClient.getTuioBlobList();
+    for (int i=0;i<tuioBlobList.size();i++) {
+        TuioBlob tblb = (TuioBlob)tuioBlobList.get(i);
+        float vx = tblb.getXSpeed() * tuioCursorSpeedMult;
+        float vy = tblb.getYSpeed() * tuioCursorSpeedMult;
+        if(vx == 0 && vy == 0) {
+            vx = random(-tuioStationaryForce, tuioStationaryForce);
+            vy = random(-tuioStationaryForce, tuioStationaryForce);
+        }
+        addForce(tblb.getX(), tblb.getY(), vx, vy);
+        //updateFluid(tblb.getX()*width, (1-tblb.getY())*height, vx*width, -vy*height);
+    }
 
     if(tuioDoubleTap) {
 //        drawFluid ^= true;
