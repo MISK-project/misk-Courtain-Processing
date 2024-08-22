@@ -42,7 +42,7 @@ boolean tuioDoubleTap = false;
 boolean verbose = false; // print console debug messages
 
 void initTUIO() {
-    tuioClient  = new TuioProcessing(this, 3334);
+    tuioClient  = new TuioProcessing(this, 3333);
 }
 
 

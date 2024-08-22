@@ -60,9 +60,9 @@ boolean drawFluid = true;
 PVector vel= new PVector(0,0);
 
 void setup() {
-    size(960, 640, P2D);    // use OPENGL rendering for bilinear filtering on texture
+    //size(960, 640, P2D);    // use OPENGL rendering for bilinear filtering on texture
     //size(screen.width * 49/50, screen.height * 49/50, OPENGL);
-    //fullScreen(P2D);
+    fullScreen(P2D);
     //hint( ENABLE_OPENGL_4X_SMOOTH );    // Turn on 4X antialiasing
     invWidth = 1.0f/width;
     invHeight = 1.0f/height;

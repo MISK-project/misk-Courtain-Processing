@@ -131,6 +131,7 @@ import processing.opengl.PGraphics2D;
  
   public void settings() {
     size(viewport_w, viewport_h, P2D);
+    //fullScreen(P2D);
     smooth(4);
   }
 

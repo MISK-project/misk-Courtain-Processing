@@ -30,7 +30,8 @@ import processing.opengl.PGraphics2D;
   PGraphics2D pg_fluid;
   
   public void settings() {
-    size(800, 800, P2D);
+    //size(800, 800, P2D);
+    fullScreen(P2D);
   }
   
   public void setup() {
