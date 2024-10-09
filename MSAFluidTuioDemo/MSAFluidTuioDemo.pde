@@ -42,7 +42,16 @@
 import msafluid.*;
 import oscP5.*;
 
-float FLUID_WIDTH = 90;
+int FLUID_WIDTH = 100;//90;
+float FLUID_WEIGHT = 0.2; //2;
+float FLUID_FADE_SPEED = 0.1;//0.003;
+float FLUID_DELTA_T = 0.5;
+float FLUID_VISC = 0.0001;
+
+String fluid_weight_addr = "/misk-ac/fluid/weight";
+String fluid_fadespeed_addr = "/misk-ac/fluid/fade-speed";
+String fluid_deltat_addr = "/misk-ac/fluid/delta-t";
+String fluid_visc_addr = "/misk-ac/fluid/visc";
 
 float invWidth, invHeight;    // inverse of screen dimensions
 float aspectRatio, aspectRatio2;
@@ -70,8 +79,8 @@ void setup() {
     aspectRatio2 = aspectRatio * aspectRatio;
 
     // create fluid and set options
-    fluidSolver = new MSAFluidSolver2D((int)(FLUID_WIDTH), (int)(FLUID_WIDTH * height/width));
-    fluidSolver.enableRGB(true).setFadeSpeed(0.003).setDeltaT(0.5).setVisc(0.0001);
+    fluidSolver = new MSAFluidSolver2D((FLUID_WIDTH), (FLUID_WIDTH * height/width));
+    fluidSolver.enableRGB(true).setFadeSpeed(FLUID_FADE_SPEED).setDeltaT(FLUID_DELTA_T).setVisc(FLUID_VISC);
     
     // create image to hold fluid picture
     imgFluid = createImage(fluidSolver.getWidth(), fluidSolver.getHeight(), RGB);
@@ -118,7 +127,7 @@ void draw() {
 
     if(drawFluid) {
         for(int i=0; i<fluidSolver.getNumCells(); i++) {
-            int d = 2;
+            int d = (int)(FLUID_WEIGHT * 100); // 2;
             imgFluid.pixels[i] = color(fluidSolver.r[i] * d, fluidSolver.g[i] * d, fluidSolver.b[i] * d);
         }  
         imgFluid.updatePixels();//  fastblur(imgFluid, 2);
@@ -185,36 +194,57 @@ void addForce(float x, float y, float dx, float dy) {
 /* incoming osc message are forwarded to the oscEvent method. */
 void oscEvent(OscMessage theOscMessage) {
   /* check if theOscMessage has the address pattern we are looking for. */
-  
-  if(theOscMessage.checkAddrPattern("/slider1")==true) {
+  if(theOscMessage.checkAddrPattern(fluid_weight_addr)) {
     /* check if the typetag is the right one. */
-    if(theOscMessage.checkTypetag("i")) {
+    if(theOscMessage.checkTypetag("f")) {
       /* parse theOscMessage and extract the values from the osc message arguments. */
-      int firstValue = theOscMessage.get(0).intValue();  
-      //float secondValue = theOscMessage.get(1).floatValue();
-      //String thirdValue = theOscMessage.get(2).stringValue();
+      FLUID_WEIGHT = theOscMessage.get(0).floatValue();  
       //print("### received an osc message /test with typetag ifs.");
-      println(" values: "+firstValue);
-      fluidSolver.setVisc(firstValue / 127);
-      //fluidSolver.setDeltaT(firstValue / 127);
-      //fluidSolver.setFadeSpeed(firstValue / 127);
       return;
     }  
   }
-  if(theOscMessage.checkAddrPattern("/slider2")==true) {
+  else if(theOscMessage.checkAddrPattern(fluid_fadespeed_addr)) {
     /* check if the typetag is the right one. */
-    if(theOscMessage.checkTypetag("i")) {
+    if(theOscMessage.checkTypetag("f")) {
       /* parse theOscMessage and extract the values from the osc message arguments. */
-      int firstValue = theOscMessage.get(0).intValue();  
+      float firstValue = theOscMessage.get(0).floatValue();  
       //float secondValue = theOscMessage.get(1).floatValue();
       //String thirdValue = theOscMessage.get(2).stringValue();
       //print("### received an osc message /test with typetag ifs.");
       println(" values: "+firstValue);
-      //fluidSolver.setVisc(firstValue / 127);
+      //fluidSolver.setVisc(firstValue/100);
       //fluidSolver.setDeltaT(firstValue / 127);
-      fluidSolver.setFadeSpeed(firstValue / 127);
+      fluidSolver.setFadeSpeed(firstValue / 10);
       return;
-    }  
+    } 
+    else if(theOscMessage.checkAddrPattern(fluid_deltat_addr)) {
+    /* check if the typetag is the right one. */
+    if(theOscMessage.checkTypetag("f")) {
+      /* parse theOscMessage and extract the values from the osc message arguments. */
+      float firstValue = theOscMessage.get(0).floatValue();  
+      //float secondValue = theOscMessage.get(1).floatValue();
+      //String thirdValue = theOscMessage.get(2).stringValue();
+      //print("### received an osc message /test with typetag ifs.");
+      println(" values: "+firstValue);
+      //fluidSolver.setVisc(firstValue/100);
+      fluidSolver.setDeltaT(firstValue);
+      //fluidSolver.setFadeSpeed(firstValue / 10);
+      return;
+    }
+    else if(theOscMessage.checkAddrPattern(fluid_visc_addr)) {
+    /* check if the typetag is the right one. */
+    if(theOscMessage.checkTypetag("f")) {
+      /* parse theOscMessage and extract the values from the osc message arguments. */
+      float firstValue = theOscMessage.get(0).floatValue();  
+      //float secondValue = theOscMessage.get(1).floatValue();
+      //String thirdValue = theOscMessage.get(2).stringValue();
+      //print("### received an osc message /test with typetag ifs.");
+      println(" values: "+firstValue);
+      fluidSolver.setVisc(firstValue/100);
+      //fluidSolver.setDeltaT(firstValue / 127);
+      //fluidSolver.setFadeSpeed(firstValue / 10);
+      return;
+    }
   }
   println("### received an osc message. with address pattern "+theOscMessage.addrPattern());
 }
