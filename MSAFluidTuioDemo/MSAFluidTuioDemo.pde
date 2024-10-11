@@ -42,16 +42,31 @@
 import msafluid.*;
 import oscP5.*;
 
+// variable 
 int FLUID_WIDTH = 100;//90;
-float FLUID_WEIGHT = 0.2; //2;
+float FLUID_WEIGHT = 2; //2;
 float FLUID_FADE_SPEED = 0.003;
 float FLUID_DELTA_T = 0.5;
 float FLUID_VISC = 0.0001;
+float FLUID_COLOR_MULT = 5;
+float FLUID_VELOCITY = 30;
+
+float PARTICLES_NUM=100;
+float PARTICLES_LIFESPAN = 100;
+float PARTICLES_SIZE = 60;
+float PARTICLES_SPEED = 4;
 
 String fluid_weight_addr = "/misk-ac/fluid/weight";
 String fluid_fadespeed_addr = "/misk-ac/fluid/fade-speed";
 String fluid_deltat_addr = "/misk-ac/fluid/delta-t";
 String fluid_visc_addr = "/misk-ac/fluid/visc";
+String fluid_color_mult = "/misk-ac/fluid/color-mult";
+String fluid_velocity = "/misk-ac/fluid/velocity";
+
+String particles_num = "/misk-ac/particles/num";
+String particles_lifespan = "/misk-ac/particles/lifespan";
+String particles_size = "/misk-ac/particles/size";
+String particles_speed = "/misk-ac/particles/speed";
 
 float invWidth, invHeight;    // inverse of screen dimensions
 float aspectRatio, aspectRatio2;
@@ -59,6 +74,7 @@ float aspectRatio, aspectRatio2;
 MSAFluidSolver2D fluidSolver;
 ParticleSystem particleSystem;
 OscP5 oscP5;
+int OSC_OUT_PORT = 12000;
 //NetAddress myBroadcastLocationOSC;
 
 PImage imgFluid;
@@ -87,11 +103,11 @@ void setup() {
     sprite = loadImage("sprite.png");
 
     // create particle system
-    particleSystem = new ParticleSystem(100);
+    particleSystem = new ParticleSystem((int)PARTICLES_NUM);
     //hint(DISABLE_DEPTH_MASK);
     
     // create osc object
-    oscP5 = new OscP5(this,12000);
+    oscP5 = new OscP5(this,OSC_OUT_PORT);
 
     // init TUIO
     initTUIO();
@@ -127,7 +143,7 @@ void draw() {
 
     if(drawFluid) {
         for(int i=0; i<fluidSolver.getNumCells(); i++) {
-            int d = (int)(FLUID_WEIGHT * 100); // 2;
+            int d = (int)(FLUID_WEIGHT); // 2;
             imgFluid.pixels[i] = color(fluidSolver.r[i] * d, fluidSolver.g[i] * d, fluidSolver.b[i] * d);
         }  
         imgFluid.updatePixels();//  fastblur(imgFluid, 2);
@@ -163,8 +179,8 @@ void addForce(float x, float y, float dx, float dy) {
         if(y<0) y = 0; 
         else if(y>1) y = 1;
 
-        float colorMult = 5;
-        float velocityMult = 30.0f;
+        float colorMult = FLUID_COLOR_MULT;
+        float velocityMult = FLUID_VELOCITY;
 
         int index = fluidSolver.getIndexForNormalizedPosition(x, y);
 
@@ -198,7 +214,7 @@ void oscEvent(OscMessage theOscMessage) {
     /* check if the typetag is the right one. */
     if(theOscMessage.checkTypetag("f")) {
       /* parse theOscMessage and extract the values from the osc message arguments. */
-      FLUID_WEIGHT = theOscMessage.get(0).floatValue();
+      FLUID_WEIGHT = theOscMessage.get(0).floatValue()*50;
       //print("### received an osc message /test with typetag ifs.");
       println(" weight: "+FLUID_WEIGHT);
       return;
@@ -208,14 +224,10 @@ void oscEvent(OscMessage theOscMessage) {
     /* check if the typetag is the right one. */
     if(theOscMessage.checkTypetag("f")) {
       /* parse theOscMessage and extract the values from the osc message arguments. */
-      float firstValue = theOscMessage.get(0).floatValue();  
-      //float secondValue = theOscMessage.get(1).floatValue();
-      //String thirdValue = theOscMessage.get(2).stringValue();
+      FLUID_FADE_SPEED = theOscMessage.get(0).floatValue()/20;
       //print("### received an osc message /test with typetag ifs.");
-      println(" fade-speed: "+firstValue/10);
-      //fluidSolver.setVisc(firstValue/100);
-      //fluidSolver.setDeltaT(firstValue / 127);
-      fluidSolver.setFadeSpeed(firstValue / 100);
+      println(" fade-speed: "+FLUID_FADE_SPEED);
+      fluidSolver.setFadeSpeed(FLUID_FADE_SPEED);
       return;
     }
   }
@@ -223,14 +235,10 @@ void oscEvent(OscMessage theOscMessage) {
     /* check if the typetag is the right one. */
     if(theOscMessage.checkTypetag("f")) {
       /* parse theOscMessage and extract the values from the osc message arguments. */
-      float firstValue = theOscMessage.get(0).floatValue();  
-      //float secondValue = theOscMessage.get(1).floatValue();
-      //String thirdValue = theOscMessage.get(2).stringValue();
+      FLUID_DELTA_T = theOscMessage.get(0).floatValue();  
       //print("### received an osc message /test with typetag ifs.");
-      println(" delta-T: "+firstValue);
-      //fluidSolver.setVisc(firstValue/100);
-      fluidSolver.setDeltaT(firstValue);
-      //fluidSolver.setFadeSpeed(firstValue / 10);
+      println(" delta-T: "+FLUID_DELTA_T);
+      fluidSolver.setDeltaT(FLUID_DELTA_T);
       return;
     }
   }
@@ -238,14 +246,70 @@ void oscEvent(OscMessage theOscMessage) {
     /* check if the typetag is the right one. */
     if(theOscMessage.checkTypetag("f")) {
       /* parse theOscMessage and extract the values from the osc message arguments. */
-      float firstValue = theOscMessage.get(0).floatValue();  
-      //float secondValue = theOscMessage.get(1).floatValue();
-      //String thirdValue = theOscMessage.get(2).stringValue();
+      FLUID_VISC = theOscMessage.get(0).floatValue()/5000;  
       //print("### received an osc message /test with typetag ifs.");
-      println(" viscosity: "+firstValue/1000);
-      fluidSolver.setVisc(firstValue/1000);
-      //fluidSolver.setDeltaT(firstValue / 127);
-      //fluidSolver.setFadeSpeed(firstValue / 10);
+      println(" viscosity: "+FLUID_VISC);
+      fluidSolver.setVisc(FLUID_VISC);
+      return;
+    }
+  }
+  else if(theOscMessage.checkAddrPattern(fluid_color_mult)) {
+    /* check if the typetag is the right one. */
+    if(theOscMessage.checkTypetag("f")) {
+      /* parse theOscMessage and extract the values from the osc message arguments. */
+      FLUID_COLOR_MULT = theOscMessage.get(0).floatValue()*10;  
+      //print("### received an osc message /test with typetag ifs.");
+      println(" Color Mult: "+FLUID_COLOR_MULT);
+      return;
+    }
+  }
+  else if(theOscMessage.checkAddrPattern(fluid_velocity)) {
+    /* check if the typetag is the right one. */
+    if(theOscMessage.checkTypetag("f")) {
+      /* parse theOscMessage and extract the values from the osc message arguments. */
+      FLUID_VELOCITY = theOscMessage.get(0).floatValue()*60;  
+      //print("### received an osc message /test with typetag ifs.");
+      println(" Color Mult: "+FLUID_VELOCITY);
+      return;
+    }
+  }
+  else if(theOscMessage.checkAddrPattern(particles_num)) {
+    /* check if the typetag is the right one. */
+    if(theOscMessage.checkTypetag("f")) {
+      /* parse theOscMessage and extract the values from the osc message arguments. */
+      PARTICLES_NUM = theOscMessage.get(0).floatValue()*200;  
+      //print("### received an osc message /test with typetag ifs.");
+      println(" Particles number: "+PARTICLES_NUM);
+      return;
+    }
+  }
+  else if(theOscMessage.checkAddrPattern(particles_lifespan)) {
+    /* check if the typetag is the right one. */
+    if(theOscMessage.checkTypetag("f")) {
+      /* parse theOscMessage and extract the values from the osc message arguments. */
+      PARTICLES_LIFESPAN = theOscMessage.get(0).floatValue()*200;  
+      //print("### received an osc message /test with typetag ifs.");
+      println(" Particles lifespan: "+PARTICLES_LIFESPAN);
+      return;
+    }
+  }
+  else if(theOscMessage.checkAddrPattern(particles_size)) {
+    /* check if the typetag is the right one. */
+    if(theOscMessage.checkTypetag("f")) {
+      /* parse theOscMessage and extract the values from the osc message arguments. */
+      PARTICLES_SIZE = theOscMessage.get(0).floatValue()*100;  
+      //print("### received an osc message /test with typetag ifs.");
+      println(" Particles size: "+PARTICLES_SIZE);
+      return;
+    }
+  }
+  else if(theOscMessage.checkAddrPattern(particles_speed)) {
+    /* check if the typetag is the right one. */
+    if(theOscMessage.checkTypetag("f")) {
+      /* parse theOscMessage and extract the values from the osc message arguments. */
+      PARTICLES_SPEED = theOscMessage.get(0).floatValue()*10;  
+      //print("### received an osc message /test with typetag ifs.");
+      println(" Particles speed: "+PARTICLES_SPEED);
       return;
     }
   }
