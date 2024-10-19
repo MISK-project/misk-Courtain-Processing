@@ -44,17 +44,17 @@ import oscP5.*;
 
 // variable 
 int FLUID_WIDTH = 100;//90;
-float FLUID_WEIGHT = 2; //2;
-float FLUID_FADE_SPEED = 0.003;
-float FLUID_DELTA_T = 0.5;
-float FLUID_VISC = 0.0001;
-float FLUID_COLOR_MULT = 5;
-float FLUID_VELOCITY = 30;
+float FLUID_WEIGHT = 36; //2; //(.72)
+float FLUID_FADE_SPEED = 0.016; //0.003; //(.32)
+float FLUID_DELTA_T = .95; //0.5; //(.95)
+float FLUID_VISC = 0.00003; // 0.0001; //(.15)
+float FLUID_COLOR_MULT = 4; //5; //(.4)
+float FLUID_VELOCITY = 30; //(.51)
 
 float PARTICLES_NUM=100;
-float PARTICLES_LIFESPAN = 100;
+float PARTICLES_LIFESPAN = 50; //100; //(.24)
 float PARTICLES_SIZE = 60;
-float PARTICLES_SPEED = 4;
+float PARTICLES_SPEED = 9; //4; //(.95)
 
 String fluid_weight_addr = "/misk-ac/fluid/weight";
 String fluid_fadespeed_addr = "/misk-ac/fluid/fade-speed";
@@ -277,7 +277,7 @@ void oscEvent(OscMessage theOscMessage) {
     /* check if the typetag is the right one. */
     if(theOscMessage.checkTypetag("f")) {
       /* parse theOscMessage and extract the values from the osc message arguments. */
-      PARTICLES_NUM = theOscMessage.get(0).floatValue()*200;  
+      //PARTICLES_NUM = theOscMessage.get(0).floatValue()*200;  
       //print("### received an osc message /test with typetag ifs.");
       println(" Particles number: "+PARTICLES_NUM);
       return;
@@ -297,7 +297,7 @@ void oscEvent(OscMessage theOscMessage) {
     /* check if the typetag is the right one. */
     if(theOscMessage.checkTypetag("f")) {
       /* parse theOscMessage and extract the values from the osc message arguments. */
-      PARTICLES_SIZE = theOscMessage.get(0).floatValue()*100;  
+      //PARTICLES_SIZE = theOscMessage.get(0).floatValue()*100;  
       //print("### received an osc message /test with typetag ifs.");
       println(" Particles size: "+PARTICLES_SIZE);
       return;
