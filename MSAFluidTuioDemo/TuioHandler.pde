@@ -105,7 +105,7 @@ void addTuioCursor(TuioCursor tcur) {
     if (verbose) println("add cur "+tcur.getCursorID()+" ("+tcur.getSessionID()+ ") " +tcur.getX()+" "+tcur.getY());
     // check for double tap
     if(tuioLastTap != null) {  // only do this if we have a previous tap
-    float timeMult = 0.000001;   // getTotalMilliseconds seems to be returning microseconds instead of milliseconds in current TUIO client library :/
+        float timeMult = 0.000001;   // getTotalMilliseconds seems to be returning microseconds instead of milliseconds in current TUIO client library :/
         float nowTime = tcur.getTuioTime().getTotalMilliseconds() * timeMult;
         float lastTime = tuioLastTap.getTuioTime().getTotalMilliseconds() * timeMult;
 //        println(nowTime + " - " + lastTime);

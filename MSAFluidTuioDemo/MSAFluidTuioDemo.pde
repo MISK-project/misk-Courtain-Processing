@@ -81,6 +81,8 @@ PImage imgFluid;
 PImage sprite;  
 
 boolean drawFluid = true;
+long idleTimeThreshold = 120;
+float lastTime = 0;
 
 PVector vel= new PVector(0,0);
 
@@ -152,6 +154,16 @@ void draw() {
     particleSystem.update(vel);
     particleSystem.display();
     //particleSystem.setEmitter(mouseX, mouseY);
+    if(tuioLastTap != null) {  // only do this if we have a previous tap
+      float nowTime = millis()/1000;//tcur.getTuioTime().getSeconds();
+      float tapTime = tuioLastTap.getTuioTime().getSeconds();
+      lastTime = max(lastTime, tapTime);
+      //println(nowTime + " - " + lastTime);
+      if((nowTime - lastTime) > random(idleTimeThreshold/3, idleTimeThreshold)) {    // check time different between current and previous tap
+        particleSystem.setEmitter(random(0.2,0.8) * width, random(0.2,0.8) * height);
+        lastTime = millis()/1000;
+      }
+    }
 }
 
 void mousePressed() {
@@ -277,7 +289,8 @@ void oscEvent(OscMessage theOscMessage) {
     /* check if the typetag is the right one. */
     if(theOscMessage.checkTypetag("f")) {
       /* parse theOscMessage and extract the values from the osc message arguments. */
-      //PARTICLES_NUM = theOscMessage.get(0).floatValue()*200;  
+      PARTICLES_NUM = theOscMessage.get(0).floatValue()*200;  
+      particleSystem = new ParticleSystem((int)PARTICLES_NUM);
       //print("### received an osc message /test with typetag ifs.");
       println(" Particles number: "+PARTICLES_NUM);
       return;
@@ -297,7 +310,8 @@ void oscEvent(OscMessage theOscMessage) {
     /* check if the typetag is the right one. */
     if(theOscMessage.checkTypetag("f")) {
       /* parse theOscMessage and extract the values from the osc message arguments. */
-      //PARTICLES_SIZE = theOscMessage.get(0).floatValue()*100;  
+      PARTICLES_SIZE = theOscMessage.get(0).floatValue()*200;  
+      particleSystem = new ParticleSystem((int)PARTICLES_NUM);
       //print("### received an osc message /test with typetag ifs.");
       println(" Particles size: "+PARTICLES_SIZE);
       return;
