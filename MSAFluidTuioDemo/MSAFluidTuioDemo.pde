@@ -40,27 +40,56 @@
  * ***********************************************************************/ 
 
 import msafluid.*;
+import oscP5.*;
 
-final float FLUID_WIDTH = 90;
+// variable 
+int FLUID_WIDTH = 100;//90;
+float FLUID_WEIGHT = 36; //2; //(.72)
+float FLUID_FADE_SPEED = 0.016; //0.003; //(.32)
+float FLUID_DELTA_T = .95; //0.5; //(.95)
+float FLUID_VISC = 0.00003; // 0.0001; //(.15)
+float FLUID_COLOR_MULT = 4; //5; //(.4)
+float FLUID_VELOCITY = 30; //(.51)
+
+float PARTICLES_NUM=100;
+float PARTICLES_LIFESPAN = 50; //100; //(.24)
+float PARTICLES_SIZE = 60;
+float PARTICLES_SPEED = 9; //4; //(.95)
+
+String fluid_weight_addr = "/misk-ac/fluid/weight";
+String fluid_fadespeed_addr = "/misk-ac/fluid/fade-speed";
+String fluid_deltat_addr = "/misk-ac/fluid/delta-t";
+String fluid_visc_addr = "/misk-ac/fluid/visc";
+String fluid_color_mult = "/misk-ac/fluid/color-mult";
+String fluid_velocity = "/misk-ac/fluid/velocity";
+
+String particles_num = "/misk-ac/particles/num";
+String particles_lifespan = "/misk-ac/particles/lifespan";
+String particles_size = "/misk-ac/particles/size";
+String particles_speed = "/misk-ac/particles/speed";
 
 float invWidth, invHeight;    // inverse of screen dimensions
 float aspectRatio, aspectRatio2;
 
 MSAFluidSolver2D fluidSolver;
-
 ParticleSystem particleSystem;
+OscP5 oscP5;
+int OSC_OUT_PORT = 12000;
+//NetAddress myBroadcastLocationOSC;
 
 PImage imgFluid;
 PImage sprite;  
 
 boolean drawFluid = true;
+long idleTimeThreshold = 120;
+float lastTime = 0;
 
 PVector vel= new PVector(0,0);
 
 void setup() {
-    size(960, 640, P2D);    // use OPENGL rendering for bilinear filtering on texture
+    //size(960, 640, P2D);    // use OPENGL rendering for bilinear filtering on texture
     //size(screen.width * 49/50, screen.height * 49/50, OPENGL);
-    //fullScreen(P2D);
+    fullScreen(P2D);
     //hint( ENABLE_OPENGL_4X_SMOOTH );    // Turn on 4X antialiasing
     invWidth = 1.0f/width;
     invHeight = 1.0f/height;
@@ -68,16 +97,19 @@ void setup() {
     aspectRatio2 = aspectRatio * aspectRatio;
 
     // create fluid and set options
-    fluidSolver = new MSAFluidSolver2D((int)(FLUID_WIDTH), (int)(FLUID_WIDTH * height/width));
-    fluidSolver.enableRGB(true).setFadeSpeed(0.003).setDeltaT(0.5).setVisc(0.0001);
+    fluidSolver = new MSAFluidSolver2D((FLUID_WIDTH), (FLUID_WIDTH * height/width));
+    fluidSolver.enableRGB(true).setFadeSpeed(FLUID_FADE_SPEED).setDeltaT(FLUID_DELTA_T).setVisc(FLUID_VISC);
     
     // create image to hold fluid picture
     imgFluid = createImage(fluidSolver.getWidth(), fluidSolver.getHeight(), RGB);
     sprite = loadImage("sprite.png");
 
     // create particle system
-    particleSystem = new ParticleSystem(100);
+    particleSystem = new ParticleSystem((int)PARTICLES_NUM);
     //hint(DISABLE_DEPTH_MASK);
+    
+    // create osc object
+    oscP5 = new OscP5(this,OSC_OUT_PORT);
 
     // init TUIO
     initTUIO();
@@ -113,7 +145,7 @@ void draw() {
 
     if(drawFluid) {
         for(int i=0; i<fluidSolver.getNumCells(); i++) {
-            int d = 2;
+            int d = (int)(FLUID_WEIGHT); // 2;
             imgFluid.pixels[i] = color(fluidSolver.r[i] * d, fluidSolver.g[i] * d, fluidSolver.b[i] * d);
         }  
         imgFluid.updatePixels();//  fastblur(imgFluid, 2);
@@ -122,6 +154,16 @@ void draw() {
     particleSystem.update(vel);
     particleSystem.display();
     //particleSystem.setEmitter(mouseX, mouseY);
+    if(tuioLastTap != null) {  // only do this if we have a previous tap
+      float nowTime = millis()/1000;//tcur.getTuioTime().getSeconds();
+      float tapTime = tuioLastTap.getTuioTime().getSeconds();
+      lastTime = max(lastTime, tapTime);
+      //println(nowTime + " - " + lastTime);
+      if((nowTime - lastTime) > random(idleTimeThreshold/3, idleTimeThreshold)) {    // check time different between current and previous tap
+        particleSystem.setEmitter(random(0.2,0.8) * width, random(0.2,0.8) * height);
+        lastTime = millis()/1000;
+      }
+    }
 }
 
 void mousePressed() {
@@ -141,7 +183,7 @@ void keyPressed() {
 void addForce(float x, float y, float dx, float dy) {
     float speed = dx * dx  + dy * dy * aspectRatio2;    // balance the x and y components of speed with the screen aspect ratio
     
-    println("x: " + x + ", y: " + y + ", vx: " + dx + ", vy: " + dy);
+    //println("x: " + x + ", y: " + y + ", vx: " + dx + ", vy: " + dy);
 
     if(speed > 0) {
         if(x<0) x = 0; 
@@ -149,8 +191,8 @@ void addForce(float x, float y, float dx, float dy) {
         if(y<0) y = 0; 
         else if(y>1) y = 1;
 
-        float colorMult = 5;
-        float velocityMult = 30.0f;
+        float colorMult = FLUID_COLOR_MULT;
+        float velocityMult = FLUID_VELOCITY;
 
         int index = fluidSolver.getIndexForNormalizedPosition(x, y);
 
@@ -175,4 +217,115 @@ void addForce(float x, float y, float dx, float dy) {
         //particleSystem.update(new PVector(dx*velocityMult, dy*velocityMult));
 
     }
+}
+
+/* incoming osc message are forwarded to the oscEvent method. */
+void oscEvent(OscMessage theOscMessage) {
+  /* check if theOscMessage has the address pattern we are looking for. */
+  if(theOscMessage.checkAddrPattern(fluid_weight_addr)) {
+    /* check if the typetag is the right one. */
+    if(theOscMessage.checkTypetag("f")) {
+      /* parse theOscMessage and extract the values from the osc message arguments. */
+      FLUID_WEIGHT = theOscMessage.get(0).floatValue()*50;
+      //print("### received an osc message /test with typetag ifs.");
+      println(" weight: "+FLUID_WEIGHT);
+      return;
+    }
+  }
+  else if(theOscMessage.checkAddrPattern(fluid_fadespeed_addr)) {
+    /* check if the typetag is the right one. */
+    if(theOscMessage.checkTypetag("f")) {
+      /* parse theOscMessage and extract the values from the osc message arguments. */
+      FLUID_FADE_SPEED = theOscMessage.get(0).floatValue()/20;
+      //print("### received an osc message /test with typetag ifs.");
+      println(" fade-speed: "+FLUID_FADE_SPEED);
+      fluidSolver.setFadeSpeed(FLUID_FADE_SPEED);
+      return;
+    }
+  }
+  else if(theOscMessage.checkAddrPattern(fluid_deltat_addr)) {
+    /* check if the typetag is the right one. */
+    if(theOscMessage.checkTypetag("f")) {
+      /* parse theOscMessage and extract the values from the osc message arguments. */
+      FLUID_DELTA_T = theOscMessage.get(0).floatValue();  
+      //print("### received an osc message /test with typetag ifs.");
+      println(" delta-T: "+FLUID_DELTA_T);
+      fluidSolver.setDeltaT(FLUID_DELTA_T);
+      return;
+    }
+  }
+  else if(theOscMessage.checkAddrPattern(fluid_visc_addr)) {
+    /* check if the typetag is the right one. */
+    if(theOscMessage.checkTypetag("f")) {
+      /* parse theOscMessage and extract the values from the osc message arguments. */
+      FLUID_VISC = theOscMessage.get(0).floatValue()/5000;  
+      //print("### received an osc message /test with typetag ifs.");
+      println(" viscosity: "+FLUID_VISC);
+      fluidSolver.setVisc(FLUID_VISC);
+      return;
+    }
+  }
+  else if(theOscMessage.checkAddrPattern(fluid_color_mult)) {
+    /* check if the typetag is the right one. */
+    if(theOscMessage.checkTypetag("f")) {
+      /* parse theOscMessage and extract the values from the osc message arguments. */
+      FLUID_COLOR_MULT = theOscMessage.get(0).floatValue()*10;  
+      //print("### received an osc message /test with typetag ifs.");
+      println(" Color Mult: "+FLUID_COLOR_MULT);
+      return;
+    }
+  }
+  else if(theOscMessage.checkAddrPattern(fluid_velocity)) {
+    /* check if the typetag is the right one. */
+    if(theOscMessage.checkTypetag("f")) {
+      /* parse theOscMessage and extract the values from the osc message arguments. */
+      FLUID_VELOCITY = theOscMessage.get(0).floatValue()*60;  
+      //print("### received an osc message /test with typetag ifs.");
+      println(" Color Mult: "+FLUID_VELOCITY);
+      return;
+    }
+  }
+  else if(theOscMessage.checkAddrPattern(particles_num)) {
+    /* check if the typetag is the right one. */
+    if(theOscMessage.checkTypetag("f")) {
+      /* parse theOscMessage and extract the values from the osc message arguments. */
+      PARTICLES_NUM = theOscMessage.get(0).floatValue()*200;  
+      particleSystem = new ParticleSystem((int)PARTICLES_NUM);
+      //print("### received an osc message /test with typetag ifs.");
+      println(" Particles number: "+PARTICLES_NUM);
+      return;
+    }
+  }
+  else if(theOscMessage.checkAddrPattern(particles_lifespan)) {
+    /* check if the typetag is the right one. */
+    if(theOscMessage.checkTypetag("f")) {
+      /* parse theOscMessage and extract the values from the osc message arguments. */
+      PARTICLES_LIFESPAN = theOscMessage.get(0).floatValue()*200;  
+      //print("### received an osc message /test with typetag ifs.");
+      println(" Particles lifespan: "+PARTICLES_LIFESPAN);
+      return;
+    }
+  }
+  else if(theOscMessage.checkAddrPattern(particles_size)) {
+    /* check if the typetag is the right one. */
+    if(theOscMessage.checkTypetag("f")) {
+      /* parse theOscMessage and extract the values from the osc message arguments. */
+      PARTICLES_SIZE = theOscMessage.get(0).floatValue()*200;  
+      particleSystem = new ParticleSystem((int)PARTICLES_NUM);
+      //print("### received an osc message /test with typetag ifs.");
+      println(" Particles size: "+PARTICLES_SIZE);
+      return;
+    }
+  }
+  else if(theOscMessage.checkAddrPattern(particles_speed)) {
+    /* check if the typetag is the right one. */
+    if(theOscMessage.checkTypetag("f")) {
+      /* parse theOscMessage and extract the values from the osc message arguments. */
+      PARTICLES_SPEED = theOscMessage.get(0).floatValue()*10;  
+      //print("### received an osc message /test with typetag ifs.");
+      println(" Particles speed: "+PARTICLES_SPEED);
+      return;
+    }
+  }
+  println("### received an osc message. with address pattern "+theOscMessage.addrPattern());
 }

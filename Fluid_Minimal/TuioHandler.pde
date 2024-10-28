@@ -56,21 +56,18 @@ void updateTUIO() {
             vx = random(-tuioStationaryForce, tuioStationaryForce);
             vy = random(-tuioStationaryForce, tuioStationaryForce);
         }
-        addForce(tcur.getX(), tcur.getY(), vx, vy);
+        //addForce(tcur.getX(), tcur.getY(), vx, vy);
+        //updateFluid(tcur.getX()*width, (1-tcur.getY())*height, vx*width, -vy*height);
+        float radius = 20;
+        float intensity = 1.0f;
+        float px = tcur.getX()*width;
+        float py = (1-tcur.getY())*height;
+        fluid.addVelocity(px, py, radius, vx*width, -vy*height);
+        fluid.addDensity    (px, py, radius, 0,0,0,intensity);
+        radius = 16;
+        fluid.addDensity    (px, py, radius, 0,0.4f,1,intensity);
     }
 
-    ArrayList tuioBlobList = tuioClient.getTuioBlobList();
-    for (int i=0;i<tuioBlobList.size();i++) {
-        TuioBlob tblb = (TuioBlob)tuioBlobList.get(i);
-        float vx = tblb.getXSpeed() * tuioCursorSpeedMult;
-        float vy = tblb.getYSpeed() * tuioCursorSpeedMult;
-        if(vx == 0 && vy == 0) {
-            vx = random(-tuioStationaryForce, tuioStationaryForce);
-            vy = random(-tuioStationaryForce, tuioStationaryForce);
-        }
-        addForce(tblb.getX(), tblb.getY(), vx, vy);
-        //updateFluid(tblb.getX()*width, (1-tblb.getY())*height, vx*width, -vy*height);
-    }
 
     if(tuioDoubleTap) {
 //        drawFluid ^= true;
@@ -105,7 +102,7 @@ void addTuioCursor(TuioCursor tcur) {
     if (verbose) println("add cur "+tcur.getCursorID()+" ("+tcur.getSessionID()+ ") " +tcur.getX()+" "+tcur.getY());
     // check for double tap
     if(tuioLastTap != null) {  // only do this if we have a previous tap
-        float timeMult = 0.000001;   // getTotalMilliseconds seems to be returning microseconds instead of milliseconds in current TUIO client library :/
+    float timeMult = 0.000001;   // getTotalMilliseconds seems to be returning microseconds instead of milliseconds in current TUIO client library :/
         float nowTime = tcur.getTuioTime().getTotalMilliseconds() * timeMult;
         float lastTime = tuioLastTap.getTuioTime().getTotalMilliseconds() * timeMult;
 //        println(nowTime + " - " + lastTime);

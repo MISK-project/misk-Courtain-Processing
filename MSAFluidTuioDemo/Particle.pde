@@ -1,5 +1,5 @@
 class Particle {
-  float MAX_LIFESPAN = 100;
+  //float MAX_LIFESPAN = PARTICLES_LIFESPAN;
   
   PVector velocity;
   float lifespan;
@@ -11,7 +11,7 @@ class Particle {
 
 
   Particle() {
-    partSize = random(10,60);
+    partSize = random(10,PARTICLES_SIZE);
     part = createShape();
     part.beginShape(QUAD);
     part.noStroke();
@@ -24,7 +24,7 @@ class Particle {
     part.endShape();
     
     rebirth(width/2,height/2);
-    lifespan = random(MAX_LIFESPAN);
+    lifespan = random(PARTICLES_LIFESPAN);
   }
 
   PShape getShape() {
@@ -33,10 +33,10 @@ class Particle {
   
   void rebirth(float x, float y) {
     float a = random(TWO_PI);
-    float speed = random(0.5,4);
+    float speed = random(0.5,PARTICLES_SPEED);
     velocity = new PVector(cos(a), sin(a));
     velocity.mult(speed);
-    lifespan = random(MAX_LIFESPAN);   
+    lifespan = random(PARTICLES_LIFESPAN);   
     part.resetMatrix();
     part.translate(x, y); 
   }
@@ -56,6 +56,8 @@ class Particle {
   public void update(PVector vel) {
     lifespan = lifespan - 1;
     velocity.add(vel);
+    //float speed = random(0.5,PARTICLES_SPEED);
+    //velocity.mult(speed);
     
     part.setTint(color(255,lifespan));
     part.translate(velocity.x, velocity.y);
