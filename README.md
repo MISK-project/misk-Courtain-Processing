@@ -30,11 +30,11 @@ The Visualization part is found in this repository. There are two branches. The 
 The [PixelFlow-Fluids branch](https://github.com/MISK-project/misk-Courtain-Processing/tree/PixelFlow-Fluids) also includes other Fluid visuals based on the [PixelFlow Processing Library](https://diwi.github.io/PixelFlow/). Use this branch if you want to experiment with other visuals which are promising. There are no OSC receive commands implemented yet in the PixelFlow sketches. But could be a fun way to vary the visuals.
 
 There are also two other folders in the main branch:
-- OSC Controller: is a [Touch-OSC](https://hexler.net/touchosc)-based controller that can write Fluid and particle parameters via OSC. E.g., to modify the fluid viscocity or the particle lifespan. 
-[!image](data/osc_controller.png)
+- OSC Controller: is a [Touch-OSC](https://hexler.net/touchosc)-based controller that can write Fluid and particle parameters via OSC. E.g., to modify the fluid viscocity or the particle lifespan.
+![image](data/osc_controller.png)
 
 - TUIO Simulator: is a java-based application that simulates the kinect TUIO messages input if you dont have a kinect available at hand. 
-[!image](data/tuio_simulator.png)
+![image](data/tuio_simulator.png)
 
 ### Releases
 A release version of the AC visuals can be found for different platforms in the [Release page](https://github.com/MISK-project/misk-Courtain-Processing/releases/tag/VKM-version). Note that the Linux / raspbery pi version needs java runtime installed.
