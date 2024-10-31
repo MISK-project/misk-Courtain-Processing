@@ -23,6 +23,8 @@ Experimental development to remodernize the Active courtan can be found in [it's
 
 In the meantime, please use a windows computer with the [SID Activ-Courtain Release v0.5 for Windows](https://github.com/MISK-project/misk-Courtain-Processing/releases/tag/VKM-version)
 
+![image](data/KinectCoreVision.jfif)
+
 ## Visualization programs (this repo)
 
 The Visualization part is found in this repository. There are two branches. The [main branch](https://github.com/MISK-project/misk-Courtain-Processing) is the one used at VKM. And is an adaptation of the [SID project Active courtain visualization program](https://github.com/hcaltenco/SID-ActiveCurtain/tree/master/processing). However, it has been modernized to work with the latest version of processing, include gpu support and allow MISK to configure parameters for the fluid visuals and the particle visuals.
@@ -31,9 +33,11 @@ The [PixelFlow-Fluids branch](https://github.com/MISK-project/misk-Courtain-Proc
 
 There are also two other folders in the main branch:
 - OSC Controller: is a [Touch-OSC](https://hexler.net/touchosc)-based controller that can write Fluid and particle parameters via OSC. E.g., to modify the fluid viscocity or the particle lifespan.
+
 ![image](data/osc_controller.png)
 
 - TUIO Simulator: is a java-based application that simulates the kinect TUIO messages input if you dont have a kinect available at hand. 
+
 ![image](data/tuio_simulator.png)
 
 ### Releases
