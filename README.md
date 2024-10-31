@@ -10,12 +10,24 @@ Prepared by:
 
 ActiveCourtain has been revived from a previous old project, [SID](https://sid.desiign.org/portfolio/activecurtain-design/). This Project is an old project, which has been reappropriated and adapted for the MISK project. The original project code as used in the SID project can be found at the [SID open source repository for the Active Courtain](https://github.com/hcaltenco/SID-ActiveCurtain). 
 
+## Requirements
+- Windows 10 amd64 computer
+- [Kinect for Xbox 360](https://en.wikipedia.org/wiki/Kinect) with USB adapter
+- [MS Kinect SDK 1.8](https://www.microsoft.com/en-us/download/details.aspx?id=40278)
+- [KinectCoreVision Misk-edition](https://github.com/MISK-project/misk-Courtain-Processing/releases/tag/VKM-version)
+- [Protokol](https://hexler.net/protokol)
+- [MSAFluid TUIO Misk-edition](https://github.com/MISK-project/misk-Courtain-Processing/releases/tag/VKM-version)
+- [Autostart batch file](Autostart.bat) --> to start all programs
+- Other material:
+  - Projector
+  - streched fabric
 
-The Active Courtain is divided into two parts, the sensing part and the visualization part.
+The Active Courtain is divided into 3 parts, the sensing part, the communication-forwarding and the visualization part.
+
 
 ## Sensing program
 
-The sensing part is based on [Kinect for Xbox 360 sensor](https://en.wikipedia.org/wiki/Kinect). The binaries are available for windows computers here: [SID Activ-Courtain Release v0.5 Windows](https://github.com/MISK-project/misk-Courtain-Processing/releases/tag/VKM-version). To run it you also need to have the [Windows Kinect SDK 1.8](https://www.microsoft.com/en-us/download/details.aspx?id=40278) installed.
+The sensing part is based on [Kinect for Xbox 360 sensor](https://en.wikipedia.org/wiki/Kinect). The binaries are available for windows computers here: [SID Activ-Courtain Release v0.5 Windows](https://github.com/MISK-project/misk-Courtain-Processing/releases/tag/VKM-version). To run it you also need to have the [Windows Kinect SDK 1.8](https://www.microsoft.com/en-us/download/details.aspx?id=40278) installed. You will need the [Microsoft Kinect SDK 1.8](https://www.microsoft.com/en-us/download/details.aspx?id=40278) installed.
 
 The app is a modification of [KinectCoreVision](https://github.com/patriciogonzalezvivo/KinectCoreVision), developed by Patricio Gonzalez Vivo in 2011 and adapted to compile in visual studio with Kinect for Windows drivers. However, you might have problems compiling the source code in the [SID Active-Courtain repository](https://github.com/hcaltenco/SID-ActiveCurtain) mentioned above. Since it relies in an older version of openframeworks and visual studio. Moreover because of its dependency to the Microsoft Kinect SDK, the app is not compatible with other operating systems.
 
@@ -25,18 +37,34 @@ In the meantime, please use a windows computer with the [SID Activ-Courtain Rele
 
 ![image](data/KinectCoreVision.jfif)
 
+## Communication forwarding
+
+Kinect core vision sends TUIO messages (via OSC) of detected blobs. to local-host (127.0.0.1) port 3333. That is to an udp port of the same machine. We need to forward the TUIO messages to the MISK computer, which is in a separate IP. For that we use the [Protokol](https://hexler.net/protokol) program.
+
+Open Protokol and click on OSC --> Options --> More
+
+![image](data/protokol-settings.png)
+
+Then forward the local port 3333 to the MISK computer IP at port 3333
+
+![image](data/protokol-osc.png)
+
+The data on the local port will also reach the visualization program
+
+
 ## Visualization programs (this repo)
 
-The Visualization part is found in this repository. There are two branches. The [main branch](https://github.com/MISK-project/misk-Courtain-Processing) is the one used at VKM. And is an adaptation of the [SID project Active courtain visualization program](https://github.com/hcaltenco/SID-ActiveCurtain/tree/master/processing). However, it has been modernized to work with the latest version of processing, include gpu support and allow MISK to configure parameters for the fluid visuals and the particle visuals.
+The Visualization part is found in this repository as **MSAFluidTuioDemo**. There are two branches:
+- The [main branch](https://github.com/MISK-project/misk-Courtain-Processing) is the one used at VKM. And is an adaptation of the [SID project Active courtain visualization program](https://github.com/hcaltenco/SID-ActiveCurtain/tree/master/processing). However, it has been modernized to work with the latest version of processing, include gpu support and allow MISK to configure parameters for the fluid visuals and the particle visuals. You can download the binary executable from the [Releases page](https://github.com/MISK-project/misk-Courtain-Processing/releases/tag/VKM-version).
 
-The [PixelFlow-Fluids branch](https://github.com/MISK-project/misk-Courtain-Processing/tree/PixelFlow-Fluids) also includes other Fluid visuals based on the [PixelFlow Processing Library](https://diwi.github.io/PixelFlow/). Use this branch if you want to experiment with other visuals which are promising. There are no OSC receive commands implemented yet in the PixelFlow sketches. But could be a fun way to vary the visuals.
+- The [PixelFlow-Fluids branch](https://github.com/MISK-project/misk-Courtain-Processing/tree/PixelFlow-Fluids) also includes other Fluid visuals based on the [PixelFlow Processing Library](https://diwi.github.io/PixelFlow/). Use this branch if you want to experiment with other visuals which are promising. There are no OSC receive commands implemented yet in the PixelFlow sketches. But could be a fun way to vary the visuals.
 
 There are also two other folders in the main branch:
-- OSC Controller: is a [Touch-OSC](https://hexler.net/touchosc)-based controller that can write Fluid and particle parameters via OSC. E.g., to modify the fluid viscocity or the particle lifespan.
+- **OSC Controller**: is a [Touch-OSC](https://hexler.net/touchosc)-based controller that can write Fluid and particle parameters via OSC. E.g., to modify the fluid viscocity or the particle lifespan.
 
 ![image](data/osc_controller.png)
 
-- TUIO Simulator: is a java-based application that simulates the kinect TUIO messages input if you dont have a kinect available at hand. 
+- **TUIO Simulator**: is a java-based application that simulates the kinect TUIO messages input if you dont have a kinect available at hand. 
 
 ![image](data/tuio_simulator.png)
 
