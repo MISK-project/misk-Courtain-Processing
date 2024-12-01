@@ -81,7 +81,7 @@ PImage imgFluid;
 PImage sprite;  
 
 boolean drawFluid = true;
-long idleTimeThreshold = 120;
+long idleTimeThreshold = 20;
 float lastTime = 0;
 
 PVector vel= new PVector(0,0);
@@ -123,6 +123,9 @@ void mouseMoved() {
 
     addForce(mouseNormX, mouseNormY, mouseVelX, mouseVelY);
     
+    float tapTime = millis()/1000;//tcur.getTuioTime().getSeconds();
+    lastTime = max(lastTime, tapTime);
+    
     //vel.x = mouseVelX*30;
     //vel.y = mouseVelY*30;
 }
@@ -142,7 +145,7 @@ void mouseMoved() {
 void draw() {
     updateTUIO();
     fluidSolver.update();
-
+    
     if(drawFluid) {
         for(int i=0; i<fluidSolver.getNumCells(); i++) {
             int d = (int)(FLUID_WEIGHT); // 2;
@@ -150,19 +153,25 @@ void draw() {
         }  
         imgFluid.updatePixels();//  fastblur(imgFluid, 2);
         image(imgFluid, 0, 0, width, height);
-    } 
+    }
+    // draw blue pixels at 0, 0
+    fill(0, 0, 200);
+    rect(0, 0, 10, 10);
+
     particleSystem.update(vel);
     particleSystem.display();
     //particleSystem.setEmitter(mouseX, mouseY);
+    
+    float nowTime = millis()/1000;//tcur.getTuioTime().getSeconds();
     if(tuioLastTap != null) {  // only do this if we have a previous tap
-      float nowTime = millis()/1000;//tcur.getTuioTime().getSeconds();
       float tapTime = tuioLastTap.getTuioTime().getSeconds();
       lastTime = max(lastTime, tapTime);
       //println(nowTime + " - " + lastTime);
-      if((nowTime - lastTime) > random(idleTimeThreshold/3, idleTimeThreshold)) {    // check time different between current and previous tap
+      
+    }
+    if((nowTime - lastTime) > idleTimeThreshold) {//random(idleTimeThreshold/3, idleTimeThreshold)) {    // check time different between current and previous tap
         particleSystem.setEmitter(random(0.2,0.8) * width, random(0.2,0.8) * height);
         lastTime = millis()/1000;
-      }
     }
 }
 
